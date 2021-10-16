@@ -1,162 +1,91 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./headers/uteis.h"
+
+
+// variaveis
+int qtTotalUsers;
 
 // arquivos
-FILE * file;
 
-//variaveis globais
-char users[100][64];
-int qtUserTotal;
-char atualUser[64];
 
 //assinaturas de funcoes
-void login(void);
+void action();
+void controller(void);
 
-void criarConta(void);
-
-void clean(void);
-
-void singUp(void);
-
-void listUsers(void);
-
-int qtUsers(void);
-
-void addOneQtUsers(void);
-
-int autentication(char *user);
+void model(void);
 
 // MAIN
 int main(void){
     
-    login();
+   qtTotalUsers = qtUsers();
+   //action();
 
-    return 0;
+   model();
+   
+   // clean();
+    return 0;  
 }
 
-
 // corpo operacional das funcoes
-void login(void){
+void action(void){
+    int islogin = login();
+
+    if(islogin == 1){
+        controller();
+    }else{
+        printf("Erro no loguin :(\n");
+    }
+}
+
+void controller(void){
     clean();
     int option;
-   
-    printf("1 - Entrar\n");
-    printf("2 - Criar uma nova conta\n");
-    printf("0 - Sair\n");
-    
-    printf("\nBem vindo :), deseja Criar uma nova conta ou efetuar o entrar: ");
+    printf("1 - Colocar uma disponibilidade\n");
+    printf("2 - Ver lista de disponibilidade por hora\n");
+    printf("3 - Ver lista de disponibilidade por jogo\n");
+    printf("0 - sair\n");
+    printf("O que deseja fazer: ");
         scanf("%i",&option);
     
-    switch (option){
+    switch (option)
+    {
     case 1:
-        singUp();
+        model();
         break;
     case 2:
-        criarConta();
+    
+        break;
+    case 3:
+
+        break;
     default:
         break;
     }
 
 }
 
-void criarConta(void){
-      clean();
+void model(void){
+    char months[] = "Gabriel,10:00,PUBG";
+    char** tokens;
 
-      char urlBase[32] = "./database/users";
+    tokens = str_split(months, ',');
 
-      char nick[64];
+    if (tokens)
+    {
+        int i;
+        int qt;
 
-      printf("Digite seu login: ");
-       scanf("%s",nick);
-    
-    file = fopen(urlBase, "a");
+        char user[qt][64];
 
-    if(file!=NULL){
-        fprintf(file,"%s\n",nick);
-    }
-
-    fclose(file);
-    addOneQtUsers();
-    login();
-}
-
-void clean(void){
-     system("cls");
-}
-
-void singUp(void){
-    listUsers();
-    qtUserTotal = qtUsers();
-    clean();
-   
-    char user[64];
-    printf("Digite seu Usuario: ");
-     scanf("%s",&user);
-    autentication(user);
-    
-}
-
-void listUsers(void){
-    char urlBase[32] = "./database/users";
-    int i=0;
-    file = fopen(urlBase, "r");
-
-    char user[64];
-    
-    if(file != NULL){
-        while (!feof(file)){
-            fscanf(file, "%s", &user);
-        
-          strcpy(users[i],user);
-       
-            i++;
+        for (i = 0; *(tokens + i); i++)
+        {
+             printf("%s\n",  *(tokens + i));
+            free(*(tokens + i));
         }
-    }
-}
-
-int qtUsers(void){
-    char urlBase[32] = "./database/qtUsers";
-    file = fopen(urlBase,"r");
-    char qtUsers[3];
-   
-   if(file != NULL){
-     while (!feof(file)){
-        fscanf(file, "%s", &qtUsers);
-     }
-   }
-    
-    fclose(file);
-    return atoi(qtUsers);
-}
-
-void addOneQtUsers(void){
-    qtUserTotal = qtUsers();
-    if(qtUserTotal==0){
-        qtUserTotal = 1;
-    }else{
-        qtUserTotal++;
-    }
-    
-
-    char urlBase[32] = "./database/qtUsers";
-
-    file = fopen(urlBase,"w");
-    
-    if(file != NULL){
-       fprintf(file,"%i",qtUserTotal);
-    }
-    fclose(file);
-}
-
-int autentication(char *user){
        
-       for(int i=0;i<qtUserTotal;i++){
-           if(strcmp(user, users[i]) == 0){
-            printf("Este user e valido");
-            return 0;
-           }
-       }
-
-       printf("Nenhum usuario encontrado");
+       
+        free(tokens);
+    }
 }
