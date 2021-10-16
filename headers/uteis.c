@@ -177,3 +177,9 @@ char** str_split(char* a_str, const char a_delim)
 
     return result;
 }
+
+void printSpace(int qt){
+    for(int i=0;i<qt;i++){
+        printf(" ");
+    }
+}
