@@ -31,7 +31,7 @@ void action(void){
     if(islogin == 1){
         controller();
     }else{
-        printf("\nErro no loguin :(\n");
+        printf("\nErro no loguin =(\n");
     }
 }
 

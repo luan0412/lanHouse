@@ -30,5 +30,7 @@ void setAtualUser(char *user);
 
 void addDisponibilidade(void);
 
-void marcar(void);
+int marcar(void);
+
+int isValidParametrs(char *nome, char *hora);
 #endif
