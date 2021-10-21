@@ -18,7 +18,16 @@ int autentication(char *user);
 
 int login(void);
 
-char** str_split(char* a_str, const char a_delim);
-
 void printSpace(int qt);
+
+void  printTableScheduled(void);
+
+void headTable(int maiorName);
+
+void controller(void);
+
+void setAtualUser(char *user);
+
+void addDisponibilidade(void);
+
 #endif

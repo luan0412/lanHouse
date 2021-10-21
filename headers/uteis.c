@@ -43,8 +43,14 @@ int singUp(void){
     char user[64];
     printf("Digite seu Usuario: ");
      scanf("%s",&user);
-    return autentication(user);
-    
+    int response = autentication(user);
+
+    if(response==1){
+        setAtualUser(user);
+        return response;
+    }else{
+        return response;
+    }
 }
 
 void listUsers(void){
@@ -82,6 +88,7 @@ int qtUsers(void){
 
 void addOneQtUsers(void){
     qtUserTotal = qtUsers();
+    
     if(qtUserTotal==0){
         qtUserTotal = 1;
     }else{
@@ -134,52 +141,191 @@ int autentication(char *user){
        return 0;
 }
 
-char** str_split(char* a_str, const char a_delim)
-{
-    char** result    = 0;
-    size_t count     = 0;
-    char* tmp        = a_str;
-    char* last_comma = 0;
-    char delim[2];
-    delim[0] = a_delim;
-    delim[1] = 0;
-
-    while (*tmp)
-    {
-        if (a_delim == *tmp)
-        {
-            count++;
-            last_comma = tmp;
-        }
-        tmp++;
-    }
-
-    count += last_comma < (a_str + strlen(a_str) - 1);
-
-    count++;
-
-    result = malloc(sizeof(char*) * count);
-
-    if (result)
-    {
-        size_t idx  = 0;
-        char* token = strtok(a_str, delim);
-
-        while (token)
-        {
-            assert(idx < count);
-            *(result + idx++) = strdup(token);
-            token = strtok(0, delim);
-        }
-        assert(idx == count - 1);
-        *(result + idx) = 0;
-    }
-
-    return result;
-}
-
 void printSpace(int qt){
     for(int i=0;i<qt;i++){
         printf(" ");
     }
+}
+
+void printTableScheduled(void){
+    clean();
+    FILE *arq;
+    char url[] = "./database/agendados.txt";
+    
+    arq = fopen(url, "r");
+
+    char a[64];
+    char b[64];
+    char c[64];
+
+    char pessoas[10][3][64];
+    int i=0;
+    int qtPessoas=0;
+    int maiorName=0;
+    while(!feof(arq)){
+        fscanf(arq, "%s", &a);
+        fscanf(arq, "%s", &b);
+        fscanf(arq, "%s", &c);
+        
+        strcpy(pessoas[i][0],a);
+        strcpy(pessoas[i][1], b);
+        strcpy(pessoas[i][2], c);
+    
+        //printf("\n|     %s      %s       %s", pessoas[i][0], pessoas[i][1], pessoas[i][2]);
+        
+        i++;
+    } 
+
+    fclose(arq);
+
+    for ( int j = 0; j<i; j++)
+    {
+        if(maiorName<strlen(pessoas[j][0])){
+            maiorName = strlen(pessoas[j][0]);
+            
+        }
+    }
+
+    qtPessoas = i;
+
+    if(maiorName%i != 0){
+        maiorName++;
+    }
+
+    headTable(maiorName);
+    printf("\n");
+
+    //Body Table
+    for(int i=0;i<qtPessoas-1;i++){
+        
+        printf("|");
+        
+        for(int j=0;j<3;j++){
+            int tamString = strlen(pessoas[i][j]);
+            
+            int space = ((maiorName+2) - tamString)/2;
+
+            printSpace(space);
+            printf("%s",pessoas[i][j]);       
+                 printSpace(space);
+        }
+        
+        printf("\n");
+    }
+    
+    printf("\n\n");
+
+    int option;
+    printf("======= Sub-Menu =======\n");
+    printf("1 - Menu Principal\n");
+    printf("2 - Rever Lista\n");
+    printf("Qual opcao voce deseja escolher: ");
+     scanf("%i", &option);
+    
+    switch (option){
+    case 1:
+       controller();
+        break;
+    case 2:
+       printTableScheduled();
+    default:
+        break;
+    }
+}
+
+void headTable(int maiorName){
+    int space;
+    
+    space = ((maiorName+2) - 4)/2;
+   
+    printf("\n======= Agendados ======\n");
+    printf("|");
+     printSpace(space);
+      printf("Nick");
+       printSpace(space);
+
+    printf("|");
+     printSpace(space);
+      printf("Hora");
+       printSpace(space);
+     
+    printf("| ");
+      printSpace(space);
+       printf("Jogo");
+        printSpace(space-1);
+   
+    printf("\n");
+
+    for(int i=0;i<3;i++){
+        printf("|",maiorName);        
+        for(int j=0;j<maiorName+1;j++){
+            printf("-");
+        }
+
+        if(maiorName%2==0){
+            printf("-");
+        }
+    }
+
+}
+
+void controller(void){
+    clean();
+    int option;
+    printf("1 - Colocar uma disponibilidade\n");
+    printf("2 - Ver lista de disponibilidade por hora\n");
+    printf("0 - sair\n");
+    printf("O que deseja fazer: ");
+        scanf("%i",&option);
+    
+    switch (option)
+    {
+    case 1:
+        addDisponibilidade();
+        break;
+    case 2:
+        printTableScheduled();
+        break;
+    default:
+        break;
+    }
+
+}
+
+void setAtualUser(char *user){
+    char urlBase[32] = "./database/atualUser";
+    file = fopen(urlBase,"w");
+   
+    if(file != NULL){
+        printf("\n %s\n",user);
+        fprintf(file, "%s", user);
+    
+   }
+    
+    fclose(file);
+}
+
+void addDisponibilidade(void){
+    clean();
+    char text[64];
+    
+       FILE * file;
+       char urlBase[32] = "./database/agendados.txt";
+       
+       file = fopen(urlBase,"a");
+
+       if(file!=NULL){
+            printf("Digite seu nome: ");
+             scanf("%s",&text);
+              fprintf(file,"%s ", text);
+            printf("Digite seu horario(HH:MM): ");
+             scanf("%s",&text);
+              fprintf(file,"%s ", text);
+            printf("Digite seu nome do jogo sem espaco: ");
+             scanf("%s",&text);
+              fprintf(file,"%s\n", text);
+       }
+       fclose(file);
+
+       controller();
 }
