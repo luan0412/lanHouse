@@ -274,6 +274,7 @@ void controller(void){
     int option;
     printf("1 - Colocar uma disponibilidade\n");
     printf("2 - Ver lista de disponibilidade por hora\n");
+    printf("3 - Marcar com alguem\n");
     printf("0 - sair\n");
     printf("O que deseja fazer: ");
         scanf("%i",&option);
@@ -285,6 +286,9 @@ void controller(void){
         break;
     case 2:
         printTableScheduled();
+        break;
+    case 3:
+        
         break;
     default:
         break;
@@ -328,4 +332,55 @@ void addDisponibilidade(void){
        fclose(file);
 
        controller();
+}
+
+void marcar(void){
+    clean();
+    listUsers();
+    int usersQt = qtUsers();
+    
+    char text[64];
+    char horario[6];
+    printf("Digite o nome: ");
+      scanf("%s",&text);
+  
+    for(int i=0;i<5;i++){
+      if(strcmp(text,users[i])==0){
+          printf("Digite o horario: ");
+           scanf("%s",&horario);
+           printf("%s\n", horario);
+      }
+    }
+
+}
+
+void isValidParametrs(){
+    FILE *arq;
+    char url[] = "./database/agendados.txt";
+    
+    arq = fopen(url, "r");
+
+    char a[64];
+    char b[64];
+    char c[64];
+
+    char pessoas[10][3][64];
+    int i=0;
+    int qtPessoas=0;
+    int maiorName=0;
+    
+    while(!feof(arq)){
+        fscanf(arq, "%s", &a);
+        fscanf(arq, "%s", &b);
+        fscanf(arq, "%s", &c);
+        
+        strcpy(pessoas[i][0],a);
+        strcpy(pessoas[i][1], b);
+        strcpy(pessoas[i][2], c);
+    
+        i++;
+    } 
+
+    fclose(arq);
+
 }

@@ -30,4 +30,5 @@ void setAtualUser(char *user);
 
 void addDisponibilidade(void);
 
+void marcar(void);
 #endif

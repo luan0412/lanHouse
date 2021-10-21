@@ -18,9 +18,9 @@ void controller(void);
 int main(void){
     
    qtTotalUsers = qtUsers();
-    action();
-
-    clean();
+   // action();
+    marcar();
+  //  clean();
     return 0;  
 }
 
@@ -34,3 +34,4 @@ void action(void){
         printf("\nErro no loguin :(\n");
     }
 }
+
