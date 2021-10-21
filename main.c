@@ -18,9 +18,8 @@ void controller(void);
 int main(void){
     
    qtTotalUsers = qtUsers();
-   // action();
-    marcar();
-  //  clean();
+    action();
+    clean();
     return 0;  
 }
 

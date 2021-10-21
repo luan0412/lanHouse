@@ -35,7 +35,7 @@ void criarConta(void)
 
 void clean(void)
 {
-    system("clear");
+    system("cls");
 }
 
 int singUp(void)
@@ -128,6 +128,7 @@ int login(void)
     clean();
     int option;
     int valid;
+    
     printf("1 - Entrar\n");
     printf("2 - Criar uma nova conta\n");
     printf("0 - Sair\n");
@@ -307,9 +308,11 @@ void controller(void)
 {
     clean();
     int option;
+    printf("====================== Menu Principal ======================\n");
     printf("1 - Colocar uma disponibilidade\n");
     printf("2 - Ver lista de disponibilidade por hora\n");
     printf("3 - Marcar com alguem\n");
+    printf("4 - Ver Agenda\n");
     printf("0 - sair\n");
     printf("O que deseja fazer: ");
     scanf("%i", &option);
@@ -323,8 +326,10 @@ void controller(void)
         printTableScheduled();
         break;
     case 3:
-
+        marcar();
         break;
+    case 4:
+        verAgenda();
     default:
         break;
     }
@@ -371,7 +376,7 @@ void addDisponibilidade(void)
     controller();
 }
 
-int marcar(void)
+void marcar(void)
 {
     clean();
     listUsers();
@@ -390,11 +395,20 @@ int marcar(void)
             scanf("%s", &horario);
             printf("%s\n", horario);
 
-            isValidParametrs(text, horario);
-
-            return 1;
+            int returnValid = isValidParametrs(text, horario);
+            
+            if(returnValid==1){
+                printf("Marcado!!!\n");
+                break;
+            }else{
+                printf("Infelizmente nao foi encontrado nessa lista =(\n");
+                break;
+            }
+            
         }
+       
     }
+     controller();
 }
 
 int isValidParametrs(char *nome, char *hora)
@@ -427,7 +441,6 @@ int isValidParametrs(char *nome, char *hora)
 
             if (strcmp(nome, a) == 0 && strcmp(hora, b) == 0)
             {
-                printf("Marcado!!\n");
                 fclose(arq);
                 char nick[64];
                 printf("Digite seu nick para confirmar: ");
@@ -457,4 +470,97 @@ int isValidParametrs(char *nome, char *hora)
     }
 
     fclose(arq);
+}
+
+void verAgenda(void)
+{
+    char nick[64];
+    printf("Digite seu nick: ");
+     scanf("%s",&nick);
+    
+     clean();
+    FILE *arq;
+    char url[] = "./database/agenda.txt";
+
+    arq = fopen(url, "r");
+
+    char a[64];
+    char b[64];
+    char c[64];
+
+    char pessoas[10][3][64];
+    int i = 0;
+    int qtPessoas = 0;
+    int maiorName = 0;
+    while (!feof(arq)){
+        fscanf(arq, "%s", &a);
+        fscanf(arq, "%s", &b);
+        fscanf(arq, "%s", &c);
+        
+        if(strcmp(nick, b)==0){
+        strcpy(pessoas[i][0], a);
+        strcpy(pessoas[i][1], c);
+        }
+        i++;
+    }
+
+    fclose(arq);
+
+    for (int j = 0; j < i; j++)
+    {
+        if (maiorName < strlen(pessoas[j][0]))
+        {
+            maiorName = strlen(pessoas[j][0]);
+        }
+    }
+
+    qtPessoas = i;
+
+    if (maiorName % i != 0)
+    {
+        maiorName++;
+    }
+
+    headTable(maiorName);
+    printf("\n");
+
+    //Body Table
+    for (int i = 0; i < qtPessoas - 1; i++)
+    {
+
+        printf("|");
+
+        for (int j = 0; j < 3; j++)
+        {
+            int tamString = strlen(pessoas[i][j]);
+
+            int space = ((maiorName + 2) - tamString) / 2;
+
+            printSpace(space);
+            printf("%s", pessoas[i][j]);
+            printSpace(space);
+        }
+
+        printf("\n");
+    }
+
+    printf("\n\n");
+
+    int option;
+    printf("======= Sub-Menu =======\n");
+    printf("1 - Menu Principal\n");
+    printf("2 - Rever Lista\n");
+    printf("Qual opcao voce deseja escolher: ");
+    scanf("%i", &option);
+
+    switch (option)
+    {
+    case 1:
+        controller();
+        break;
+    case 2:
+        verAgenda();
+    default:
+        break;
+    }
 }
